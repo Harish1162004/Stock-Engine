@@ -1,13 +1,9 @@
 package com.stockengine.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "orders")   // ✅ FIX: avoid MySQL reserved keyword "order"
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -15,27 +11,27 @@ public class Order {
     private Long id;
 
     private String username;
-    private String stock;
-    private String type; // BUY or SELL
+    private String stock;    // symbol
+    private String type;     // BUY / SELL
     private int quantity;
     private double price;
+    private long time;
 
-    // ✅ No-arg constructor (required by JPA)
-    public Order() {
+    // ===== REQUIRED GETTERS FOR PORTFOLIO =====
+
+    public String getSymbol() {
+        return stock;
     }
 
-    // ✅ Parameterized constructor
-    public Order(String username, String stock, String type, int quantity, double price) {
-        this.username = username;
-        this.stock = stock;
-        this.type = type;
-        this.quantity = quantity;
-        this.price = price;
+    public String getSide() {
+        return type;
     }
 
-    // =====================
-    // ✅ GETTERS
-    // =====================
+    public int getQty() {
+        return quantity;
+    }
+
+    // ===== NORMAL GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
@@ -45,47 +41,35 @@ public class Order {
         return username;
     }
 
-    public String getStock() {
-        return stock;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getType() {
-        return type;
+    public void setSymbol(String stock) {
+        this.stock = stock;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public void setSide(String type) {
+        this.type = type;
+    }
+
+    public void setQty(int quantity) {
+        this.quantity = quantity;
     }
 
     public double getPrice() {
         return price;
     }
 
-    // =====================
-    // ✅ SETTERS
-    // =====================
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setStock(String stock) {
-        this.stock = stock;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

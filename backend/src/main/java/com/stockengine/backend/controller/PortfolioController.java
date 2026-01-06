@@ -1,8 +1,8 @@
 package com.stockengine.backend.controller;
 
-import com.stockengine.backend.dto.PortfolioItem;
 import com.stockengine.backend.entity.Order;
 import com.stockengine.backend.repository.OrderRepository;
+import com.stockengine.backend.dto.PortfolioItem;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -19,44 +19,39 @@ public class PortfolioController {
     }
 
     @GetMapping("/{username}")
-    public Map<String, Object> getPortfolio(@PathVariable String username) {
+    public Collection<PortfolioItem> getPortfolio(@PathVariable String username) {
 
         List<Order> orders = orderRepository.findByUsername(username);
 
         Map<String, PortfolioItem> portfolioMap = new HashMap<>();
 
         for (Order order : orders) {
-            String stock = order.getStock();
 
-            int qty = order.getType().equals("BUY")
-                    ? order.getQuantity()
-                    : -order.getQuantity();
+            // ✅ USE DOMAIN METHODS
+            String symbol = order.getSymbol();
+            int qty = order.getSide().equals("BUY")
+                    ? order.getQty()
+                    : -order.getQty();
 
-            double amount = order.getType().equals("BUY")
-                    ? order.getQuantity() * order.getPrice()
-                    : -order.getQuantity() * order.getPrice();
+            double amount = qty * order.getPrice();
 
             portfolioMap.putIfAbsent(
-                    stock,
-                    new PortfolioItem(stock, 0, 0)
+                    symbol,
+                    new PortfolioItem(symbol, 0, 0.0)
             );
 
-            PortfolioItem item = portfolioMap.get(stock);
+            PortfolioItem item = portfolioMap.get(symbol);
 
-            portfolioMap.put(
-                    stock,
-                    new PortfolioItem(
-                            stock,
-                            item.getQuantity() + qty,
-                            item.getInvested() + amount
-                    )
-            );
+            int newQty = item.getNetQty() + qty;
+            double newValue = (item.getAvgPrice() * item.getNetQty()) + amount;
+
+            if (newQty != 0) {
+                item.setAvgPrice(Math.abs(newValue / newQty));
+            }
+
+            item.setNetQty(newQty);
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("username", username);
-        response.put("portfolio", portfolioMap.values());
-
-        return response;
+        return portfolioMap.values();
     }
 }

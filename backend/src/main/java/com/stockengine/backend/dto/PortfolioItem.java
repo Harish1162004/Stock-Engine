@@ -2,25 +2,33 @@ package com.stockengine.backend.dto;
 
 public class PortfolioItem {
 
-    private String stock;
-    private int quantity;
-    private double invested;
+    private String symbol;
+    private int netQty;
+    private double avgPrice;
 
-    public PortfolioItem(String stock, int quantity, double invested) {
-        this.stock = stock;
-        this.quantity = quantity;
-        this.invested = invested;
+    public PortfolioItem(String symbol, int netQty, double avgPrice) {
+        this.symbol = symbol;
+        this.netQty = netQty;
+        this.avgPrice = avgPrice;
     }
 
-    public String getStock() {
-        return stock;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getNetQty() {
+        return netQty;
     }
 
-    public double getInvested() {
-        return invested;
+    public void setNetQty(int netQty) {
+        this.netQty = netQty;
+    }
+
+    public double getAvgPrice() {
+        return avgPrice;
+    }
+
+    public void setAvgPrice(double avgPrice) {
+        this.avgPrice = avgPrice;
     }
 }
